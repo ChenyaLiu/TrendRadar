@@ -1,15 +1,9 @@
 name: Hot News Crawler
 on:
   schedule:
-    # ⚠️ 重要提示：我们使用的是 GitHub 官方提供的资源来进行的推送，而每个账号的资源是限额的
-    # 为了不被官方判定为滥用而面临封号的风险，不建议设置比半小时更短的执行间隔
-    #
-    # Cron 表达式示例（注意：GitHub Actions 使用 UTC 时间，北京时间需要减 8 小时）:
-    # - "0 * * * *"         # 每小时整点运行一次（实际有偏差）
-    # - "*/30 * * * *"      # 每 30 分钟执行一次
-    # - "*/30 0-14 * * *"   # 每天 UTC 0:00-14:00（北京时间 8:00-22:00），每 30 分钟运行一次
-    # - "0 0,6,12,18 * * *" # 每天 UTC 0:00,6:00,12:00,18:00（北京时间 8:00,14:00,20:00,次日2:00）
-    - cron: "0 * * * *"
+    # 北京时间 09:00 与 17:00
+    - cron: "0 1 * * *"   # UTC 01:00 → 北京 09:00
+    - cron: "0 9 * * *"   # UTC 09:00 → 北京 17:00
   workflow_dispatch:
 
 concurrency:
@@ -85,13 +79,8 @@ jobs:
           echo "🔄 Syncing with remote (branch: $BRANCH_NAME)..."
           git fetch origin $BRANCH_NAME
           
-          # 保存当前更改
           git stash --include-untracked || echo "Nothing to stash"
-          
-          # 同步到远程最新
           git reset --hard origin/$BRANCH_NAME
-          
-          # 恢复本次更改
           git stash pop || echo "Nothing to pop"
           
           git add -A
